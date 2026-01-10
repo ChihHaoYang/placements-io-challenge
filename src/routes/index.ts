@@ -1,6 +1,9 @@
 import { createHashRouter } from 'react-router'
 
 import Layout from '../components/Layout/Layout'
+import CampaignDetail from '../pages/CampaignDetail'
+import CampaignList from '../pages/CampaignList'
+import Dashboard from '../pages/Dashboard'
 
 export const PAGES = {
   DASHBOARD: 'DASHBOARD',
@@ -19,14 +22,14 @@ export const router = createHashRouter([
     path: '/',
     Component: Layout,
     children: [
-      { index: true, Component: () => 'Dashboard placeholder' },
+      { index: true, Component: Dashboard },
       {
         path: URLS.CAMPAIGN_LIST,
-        Component: () => 'Campaign List placeholder'
+        Component: CampaignList
       },
       {
         path: URLS.CAMPAIGN_DETAIL,
-        Component: () => 'Campaign Detail placeholder'
+        Component: CampaignDetail
       },
       {
         path: '*',
