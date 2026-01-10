@@ -4,20 +4,25 @@ import {
   Group,
   LoadingOverlay,
   NumberFormatter,
+  Pagination,
   Paper,
   ScrollArea,
+  Select,
   Table,
   Text,
   Title
 } from '@mantine/core'
 import { IconEye } from '@tabler/icons-react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router'
 
 import { useCampaigns } from '../hooks/useCampaigns'
 
 export default function CampaignList() {
   const navigate = useNavigate()
-  const { data: campaigns, isLoading, isError } = useCampaigns()
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState<string>('10')
+  const { data: campaigns, isLoading, isError } = useCampaigns(page, Number(pageSize))
 
   const getBadgeColor = (utilization: number) => {
     if (utilization >= 100) return 'red'
@@ -25,7 +30,16 @@ export default function CampaignList() {
     return 'green'
   }
 
-  const rows = campaigns?.map((campaign) => (
+  const getUtilization = (actual: number, booked: number) => {
+    const utilization = (actual / booked) * 100
+    return (
+      <Badge color={getBadgeColor(utilization)} variant="light">
+        <NumberFormatter value={utilization} decimalScale={2} />%
+      </Badge>
+    )
+  }
+
+  const rows = campaigns?.data.map((campaign) => (
     <Table.Tr key={campaign.id}>
       <Table.Td title={campaign.name}>
         <Text fw={500} size="sm">
@@ -36,11 +50,7 @@ export default function CampaignList() {
         </Text>
       </Table.Td>
       <Table.Td>{campaign.advertiser}</Table.Td>
-      <Table.Td>
-        <Badge color={getBadgeColor(campaign.utilization)} variant="light">
-          <NumberFormatter value={campaign.utilization} decimalScale={2} />%
-        </Badge>
-      </Table.Td>
+      <Table.Td>{getUtilization(campaign.actualSpend, campaign.budget)}</Table.Td>
       <Table.Td style={{ textAlign: 'right' }}>
         <NumberFormatter prefix="$ " value={campaign.budget} thousandSeparator decimalScale={0} />
       </Table.Td>
@@ -102,6 +112,27 @@ export default function CampaignList() {
           <Table.Tbody>{rows}</Table.Tbody>
         </Table>
       </ScrollArea>
+
+      <Group justify="flex-end" mt="md">
+        <Select
+          value={pageSize}
+          onChange={(v) => {
+            if (v) {
+              setPageSize(v)
+              setPage(1)
+            }
+          }}
+          data={['10', '20', '50']}
+          w={80}
+          allowDeselect={false}
+        />
+        <Pagination
+          total={campaigns?.meta.totalPages || 0}
+          value={page}
+          onChange={setPage}
+          color="blue"
+        />
+      </Group>
     </Paper>
   )
 }
