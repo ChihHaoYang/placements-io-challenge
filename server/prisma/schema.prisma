@@ -9,3 +9,24 @@ generator client {
 datasource db {
   provider = "sqlite"
 }
+
+model Campaign {
+  id          Int        @id
+  name        String
+  advertiser  String
+
+  lineItems   LineItem[]
+}
+
+model LineItem {
+  id            Int      @id
+  campaignId    Int
+  name          String
+  bookedAmount  Float
+  actualAmount  Float
+  adjustments   Float
+
+  campaign      Campaign @relation(fields: [campaignId], references: [id])
+
+  @@index([campaignId])
+}
