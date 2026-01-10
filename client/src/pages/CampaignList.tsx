@@ -13,16 +13,23 @@ import {
   Title
 } from '@mantine/core'
 import { IconEye } from '@tabler/icons-react'
-import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useNavigate, useSearchParams } from 'react-router'
 
 import { useCampaigns } from '../hooks/useCampaigns'
 
 export default function CampaignList() {
   const navigate = useNavigate()
-  const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState<string>('10')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const page = Number(searchParams.get('p') || 1)
+  const pageSize = Number(searchParams.get('size') || 10)
   const { data: campaigns, isLoading, isError } = useCampaigns(page, Number(pageSize))
+
+  const updateParams = (newPage: number, newPageSize: number) => {
+    setSearchParams({
+      p: newPage.toString(),
+      size: newPageSize.toString()
+    })
+  }
 
   const getBadgeColor = (utilization: number) => {
     if (utilization >= 100) return 'red'
@@ -62,7 +69,7 @@ export default function CampaignList() {
           decimalScale={0}
         />
       </Table.Td>
-      <Table.Td>
+      <Table.Td style={{ textAlign: 'right' }}>
         <Button
           variant="subtle"
           size="xs"
@@ -106,7 +113,7 @@ export default function CampaignList() {
               <Table.Th>Utilization</Table.Th>
               <Table.Th style={{ textAlign: 'right' }}>Booked Budget</Table.Th>
               <Table.Th style={{ textAlign: 'right' }}>Actual Spend</Table.Th>
-              <Table.Th>Action</Table.Th>
+              <Table.Th style={{ textAlign: 'right' }}>Action</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>{rows}</Table.Tbody>
@@ -115,21 +122,20 @@ export default function CampaignList() {
 
       <Group justify="flex-end" mt="md">
         <Select
-          value={pageSize}
+          value={pageSize.toString()}
           onChange={(v) => {
             if (v) {
-              setPageSize(v)
-              setPage(1)
+              updateParams(1, Number(v))
             }
           }}
-          data={['10', '20', '50']}
+          data={['10', '20', '50', '100']}
           w={80}
           allowDeselect={false}
         />
         <Pagination
           total={campaigns?.meta.totalPages || 0}
           value={page}
-          onChange={setPage}
+          onChange={(newPage) => updateParams(newPage, pageSize)}
           color="blue"
         />
       </Group>
