@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 
+import { BASE_URL } from '../api'
 import type { AdjustmentHistory } from '../types'
 
 const fetchLineItemEditHistory = async (lineItemId: number): Promise<AdjustmentHistory[]> => {
-  const res = await fetch(`http://localhost:3000/api/line-items/${lineItemId}/history`)
+  const res = await fetch(`${BASE_URL}/line-items/${lineItemId}/history`)
 
   if (!res.ok) {
     throw new Error('Network response was not ok')

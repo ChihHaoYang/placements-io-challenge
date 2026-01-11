@@ -16,6 +16,7 @@ import { IconDownload, IconEye } from '@tabler/icons-react'
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 
+import { BASE_URL } from '../api'
 import { useCampaigns } from '../hooks'
 
 export default function CampaignList() {
@@ -30,7 +31,7 @@ export default function CampaignList() {
   const handleExport = async () => {
     try {
       setIsExporting(true)
-      const res = await fetch('http://localhost:3000/api/export')
+      const res = await fetch(`${BASE_URL}/export`)
       if (!res.ok) throw new Error('Export failed')
 
       const blob = await res.blob()

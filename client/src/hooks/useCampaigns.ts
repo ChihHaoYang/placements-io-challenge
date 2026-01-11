@@ -1,5 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 
+import { BASE_URL } from '../api'
 import type { Campaign } from '../types'
 
 interface CampaignsResponse {
@@ -12,7 +13,7 @@ interface CampaignsResponse {
 }
 
 const fetchCampaigns = async (page: number, pageSize: number): Promise<CampaignsResponse> => {
-  const res = await fetch(`http://localhost:3000/api/campaigns?page=${page}&pageSize=${pageSize}`)
+  const res = await fetch(`${BASE_URL}/campaigns?page=${page}&pageSize=${pageSize}`)
 
   if (!res.ok) {
     throw new Error('Network response was not ok')

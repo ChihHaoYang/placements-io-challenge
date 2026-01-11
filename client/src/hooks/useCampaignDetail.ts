@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
+import { BASE_URL } from '../api'
 import type { Campaign, LineItem } from '../types'
 
 interface CampaignDetail extends Campaign {
@@ -7,13 +8,13 @@ interface CampaignDetail extends Campaign {
 }
 
 const fetchCampaignDetail = async (id: string): Promise<CampaignDetail> => {
-  const res = await fetch(`http://localhost:3000/api/campaigns/${id}`)
+  const res = await fetch(`${BASE_URL}/campaigns/${id}`)
   if (!res.ok) throw new Error('Failed to fetch campaign')
   return res.json()
 }
 
 const updateAdjustment = async ({ id, adjustments }: { id: number; adjustments: number }) => {
-  const res = await fetch(`http://localhost:3000/api/line-items/${id}`, {
+  const res = await fetch(`${BASE_URL}/line-items/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ adjustments })
