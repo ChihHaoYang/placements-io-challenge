@@ -6,7 +6,6 @@ import {
   NumberFormatter,
   Pagination,
   Paper,
-  ScrollArea,
   Select,
   Table,
   Text,
@@ -104,8 +103,14 @@ export default function CampaignList() {
         <Button>Export All</Button>
       </Group>
 
-      <ScrollArea>
-        <Table highlightOnHover verticalSpacing="sm" layout="fixed">
+      <Table.ScrollContainer maxHeight="60dvh" minWidth={500}>
+        <Table
+          highlightOnHover
+          stickyHeader
+          stickyHeaderOffset={0}
+          verticalSpacing="sm"
+          layout="fixed"
+        >
           <Table.Thead>
             <Table.Tr>
               <Table.Th w={300}>Name</Table.Th>
@@ -118,7 +123,7 @@ export default function CampaignList() {
           </Table.Thead>
           <Table.Tbody>{rows}</Table.Tbody>
         </Table>
-      </ScrollArea>
+      </Table.ScrollContainer>
 
       <Group justify="flex-end" mt="md">
         <Select

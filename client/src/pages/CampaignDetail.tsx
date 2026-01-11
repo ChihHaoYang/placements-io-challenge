@@ -101,34 +101,39 @@ export default function CampaignDetail() {
         <Title order={4} mb="md">
           Invoice Line Items
         </Title>
-        <Table verticalSpacing="sm" layout="fixed">
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th w="35%">Item Name</Table.Th>
-              <Table.Th w="15%" style={{ textAlign: 'right' }}>
-                Booked
-              </Table.Th>
-              <Table.Th w="15%" style={{ textAlign: 'right' }}>
-                Actual
-              </Table.Th>
-              <Table.Th w="20%" style={{ textAlign: 'right' }}>
-                Adjustments
-              </Table.Th>
-              <Table.Th w="15%" style={{ textAlign: 'right' }}>
-                Total Billable
-              </Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {campaign.lineItems.slice((page - 1) * pageSize, page * pageSize).map((item) => (
-              <LineItemRow
-                key={item.id}
-                item={item}
-                onUpdate={(lineItemId, val) => updateLineItem({ id: lineItemId, adjustments: val })}
-              />
-            ))}
-          </Table.Tbody>
-        </Table>
+
+        <Table.ScrollContainer maxHeight="50dvh" minWidth={500}>
+          <Table verticalSpacing="sm" layout="fixed" stickyHeader stickyHeaderOffset={0}>
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th w="35%">Item Name</Table.Th>
+                <Table.Th w="15%" style={{ textAlign: 'right' }}>
+                  Booked
+                </Table.Th>
+                <Table.Th w="15%" style={{ textAlign: 'right' }}>
+                  Actual
+                </Table.Th>
+                <Table.Th w="20%" style={{ textAlign: 'right' }}>
+                  Adjustments
+                </Table.Th>
+                <Table.Th w="15%" style={{ textAlign: 'right' }}>
+                  Total Billable
+                </Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
+              {campaign.lineItems.slice((page - 1) * pageSize, page * pageSize).map((item) => (
+                <LineItemRow
+                  key={item.id}
+                  item={item}
+                  onUpdate={(lineItemId, val) =>
+                    updateLineItem({ id: lineItemId, adjustments: val })
+                  }
+                />
+              ))}
+            </Table.Tbody>
+          </Table>
+        </Table.ScrollContainer>
 
         <Group justify="flex-end" mt="md">
           <Select
