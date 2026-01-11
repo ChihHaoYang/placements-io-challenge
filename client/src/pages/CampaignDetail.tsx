@@ -1,4 +1,5 @@
 import {
+  ActionIcon,
   Badge,
   Button,
   Container,
@@ -12,14 +13,17 @@ import {
   Select,
   Table,
   Text,
-  Title
+  Title,
+  Tooltip
 } from '@mantine/core'
 import { useDebouncedCallback } from '@mantine/hooks'
-import { IconCheck, IconLoader2 } from '@tabler/icons-react'
+import { modals } from '@mantine/modals'
+import { IconCheck, IconHistory, IconLoader2 } from '@tabler/icons-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 
 import { AnimatedNumber } from '../components/AnimatedNumber'
+import { HistoryModal } from '../components/Modal'
 import { useCampaignDetail } from '../hooks'
 import type { LineItem } from '../types'
 
@@ -129,6 +133,19 @@ export default function CampaignDetail() {
                   onUpdate={(lineItemId, val) =>
                     updateLineItem({ id: lineItemId, adjustments: val })
                   }
+                  onShowHistory={() => {
+                    modals.open({
+                      styles: {
+                        inner: {
+                          left: 0,
+                          right: 0
+                        }
+                      },
+                      title: `History: ${item.name}`,
+                      centered: true,
+                      children: <HistoryModal lineItemId={item.id} />
+                    })
+                  }}
                 />
               ))}
             </Table.Tbody>
@@ -163,9 +180,10 @@ export default function CampaignDetail() {
 interface LineItemRowProps {
   item: LineItem
   onUpdate: (id: number, val: number) => void
+  onShowHistory?: () => void
 }
 
-function LineItemRow({ item, onUpdate }: LineItemRowProps) {
+function LineItemRow({ item, onUpdate, onShowHistory }: LineItemRowProps) {
   const [localAdjustment, setLocalAdjustment] = useState<number | string>(item.adjustments)
 
   useEffect(() => {
@@ -199,6 +217,13 @@ function LineItemRow({ item, onUpdate }: LineItemRowProps) {
           }}
           allowNegative
         />
+        {onShowHistory && (
+          <Tooltip label="View Change History">
+            <ActionIcon variant="light" color="gray" onClick={onShowHistory}>
+              <IconHistory size={16} />
+            </ActionIcon>
+          </Tooltip>
+        )}
       </Table.Td>
       <Table.Td style={{ textAlign: 'right' }}>
         <Text fw={700}>

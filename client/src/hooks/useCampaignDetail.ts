@@ -33,9 +33,10 @@ export function useCampaignDetail(id: string) {
 
   const mutation = useMutation({
     mutationFn: updateAdjustment,
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['campaign', id] })
       queryClient.invalidateQueries({ queryKey: ['campaigns'] })
+      queryClient.invalidateQueries({ queryKey: ['history', variables.id] })
     }
   })
 

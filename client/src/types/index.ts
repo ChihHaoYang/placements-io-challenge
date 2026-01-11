@@ -26,3 +26,11 @@ export interface LineItem {
   adjustments: number
   billableAmount: number
 }
+
+export interface AdjustmentHistory {
+  id: number
+  lineItemId: number
+  oldValue: number
+  newValue: number
+  createdAt: string
+}
