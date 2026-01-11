@@ -1,4 +1,5 @@
 import { Text, type TextProps, Tooltip } from '@mantine/core'
+import { memo } from 'react'
 import CountUp from 'react-countup'
 
 interface AnimatedNumberProps extends TextProps {
@@ -7,7 +8,7 @@ interface AnimatedNumberProps extends TextProps {
   prefix?: string
 }
 
-export function AnimatedNumber({
+export const AnimatedNumber = memo(function AnimatedNumber({
   value,
   prefix = '',
   compact,
@@ -66,4 +67,4 @@ export function AnimatedNumber({
       />
     </Text>
   )
-}
+})

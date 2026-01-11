@@ -7,14 +7,16 @@ import {
   LoadingOverlay,
   NumberFormatter,
   NumberInput,
+  Pagination,
   Paper,
+  Select,
   Table,
   Text,
   Title
 } from '@mantine/core'
 import { useDebouncedCallback } from '@mantine/hooks'
 import { IconCheck, IconLoader2 } from '@tabler/icons-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 
 import { AnimatedNumber } from '../components/AnimatedNumber'
@@ -22,9 +24,19 @@ import { useCampaignDetail } from '../hooks/useCampaignDetail'
 import type { LineItem } from '../types'
 
 export default function CampaignDetail() {
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
+
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { data: campaign, isLoading, updateLineItem, isFetching } = useCampaignDetail(id || '')
+  const animatedNumberStyle = useMemo(
+    () => ({
+      fontSize: '2rem',
+      lineHeight: 1.5
+    }),
+    []
+  )
 
   if (isLoading) return <LoadingOverlay visible />
   if (!campaign) return <Text>Campaign not found</Text>
@@ -69,7 +81,7 @@ export default function CampaignDetail() {
                 prefix="$ "
                 c="blue"
                 fw={900}
-                style={{ fontSize: '2rem', lineHeight: 1.5 }}
+                style={animatedNumberStyle}
               />
             </Title>
             <Text size="xs" c="dimmed">
@@ -108,7 +120,7 @@ export default function CampaignDetail() {
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
-            {campaign.lineItems.map((item) => (
+            {campaign.lineItems.slice((page - 1) * pageSize, page * pageSize).map((item) => (
               <LineItemRow
                 key={item.id}
                 item={item}
@@ -117,6 +129,27 @@ export default function CampaignDetail() {
             ))}
           </Table.Tbody>
         </Table>
+
+        <Group justify="flex-end" mt="md">
+          <Select
+            value={pageSize.toString()}
+            onChange={(v) => {
+              if (v) {
+                setPage(1)
+                setPageSize(Number(v))
+              }
+            }}
+            data={['10', '20', '50', '100']}
+            w={80}
+            allowDeselect={false}
+          />
+          <Pagination
+            total={Math.ceil(campaign.lineItems.length / pageSize)}
+            value={page}
+            onChange={(newPage) => setPage(newPage)}
+            color="blue"
+          />
+        </Group>
       </Paper>
     </Container>
   )
