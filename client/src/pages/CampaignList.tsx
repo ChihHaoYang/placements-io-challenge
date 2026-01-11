@@ -87,10 +87,10 @@ export default function CampaignList() {
       </Table.Td>
       <Table.Td>{campaign.advertiser}</Table.Td>
       <Table.Td>{getUtilization(campaign.actualSpend, campaign.budget)}</Table.Td>
-      <Table.Td style={{ textAlign: 'right' }}>
+      <Table.Td ta="right">
         <NumberFormatter prefix="$ " value={campaign.budget} thousandSeparator decimalScale={0} />
       </Table.Td>
-      <Table.Td style={{ textAlign: 'right' }}>
+      <Table.Td ta="right">
         <NumberFormatter
           prefix="$ "
           value={campaign.actualSpend}
@@ -98,7 +98,7 @@ export default function CampaignList() {
           decimalScale={0}
         />
       </Table.Td>
-      <Table.Td style={{ textAlign: 'right' }}>
+      <Table.Td ta="right">
         <Button
           variant="subtle"
           size="xs"
@@ -153,9 +153,9 @@ export default function CampaignList() {
               <Table.Th w={300}>Name</Table.Th>
               <Table.Th>Advertiser</Table.Th>
               <Table.Th>Utilization</Table.Th>
-              <Table.Th style={{ textAlign: 'right' }}>Booked Budget</Table.Th>
-              <Table.Th style={{ textAlign: 'right' }}>Actual Spend</Table.Th>
-              <Table.Th style={{ textAlign: 'right' }}>Action</Table.Th>
+              <Table.Th ta="right">Booked Budget</Table.Th>
+              <Table.Th ta="right">Actual Spend</Table.Th>
+              <Table.Th ta="right">Action</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>{rows}</Table.Tbody>

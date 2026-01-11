@@ -3,6 +3,7 @@ import {
   Badge,
   Button,
   Container,
+  Flex,
   Grid,
   Group,
   LoadingOverlay,
@@ -111,16 +112,16 @@ export default function CampaignDetail() {
             <Table.Thead>
               <Table.Tr>
                 <Table.Th w="35%">Item Name</Table.Th>
-                <Table.Th w="15%" style={{ textAlign: 'right' }}>
+                <Table.Th w="15%" ta="right">
                   Booked
                 </Table.Th>
-                <Table.Th w="15%" style={{ textAlign: 'right' }}>
+                <Table.Th w="15%" ta="right">
                   Actual
                 </Table.Th>
-                <Table.Th w="20%" style={{ textAlign: 'right' }}>
+                <Table.Th w="20%" ta="right">
                   Adjustments
                 </Table.Th>
-                <Table.Th w="15%" style={{ textAlign: 'right' }}>
+                <Table.Th w="15%" ta="right">
                   Total Billable
                 </Table.Th>
               </Table.Tr>
@@ -200,32 +201,34 @@ function LineItemRow({ item, onUpdate, onShowHistory }: LineItemRowProps) {
       <Table.Td>
         <Text fw={500}>{item.name}</Text>
       </Table.Td>
-      <Table.Td style={{ textAlign: 'right' }}>
+      <Table.Td ta="right">
         <NumberFormatter prefix="$ " value={item.bookedAmount} thousandSeparator decimalScale={2} />
       </Table.Td>
-      <Table.Td style={{ textAlign: 'right' }}>
+      <Table.Td ta="right">
         <NumberFormatter prefix="$ " value={item.actualAmount} thousandSeparator decimalScale={2} />
       </Table.Td>
-      <Table.Td>
-        <NumberInput
-          value={localAdjustment}
-          decimalScale={2}
-          prefix="$ "
-          onChange={(val) => {
-            setLocalAdjustment(val)
-            handleDebouncedUpdate(val)
-          }}
-          allowNegative
-        />
-        {onShowHistory && (
-          <Tooltip label="View Change History">
-            <ActionIcon variant="light" color="gray" onClick={onShowHistory}>
-              <IconHistory size={16} />
-            </ActionIcon>
-          </Tooltip>
-        )}
+      <Table.Td ta="right">
+        <Flex justify="flex-end" align="center">
+          <NumberInput
+            value={localAdjustment}
+            decimalScale={2}
+            prefix="$ "
+            onChange={(val) => {
+              setLocalAdjustment(val)
+              handleDebouncedUpdate(val)
+            }}
+            allowNegative
+          />
+          {onShowHistory && (
+            <Tooltip label="View Change History">
+              <ActionIcon variant="light" color="gray" onClick={onShowHistory}>
+                <IconHistory size={16} />
+              </ActionIcon>
+            </Tooltip>
+          )}
+        </Flex>
       </Table.Td>
-      <Table.Td style={{ textAlign: 'right' }}>
+      <Table.Td ta="right">
         <Text fw={700}>
           <NumberFormatter
             prefix="$ "
