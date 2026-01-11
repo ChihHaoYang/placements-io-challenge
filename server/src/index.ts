@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { stringify } from "csv-stringify/sync";
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
@@ -111,6 +112,62 @@ app.patch("/api/line-items/:id", async (c) => {
   } catch (e) {
     return c.json({ error: "Update failed" }, 500);
   }
+});
+
+app.get("/api/export", async (c) => {
+  // Get all campaigns with line items count
+  // It's okay to fetch all data here for export for such a small dataset
+  const campaigns = await prisma.campaign.findMany({
+    include: { lineItems: true },
+    orderBy: { id: "asc" },
+  });
+
+  // Note: in JavaScript, it could be not accurate for the calculation of floating point numbers.
+  // For production usage, should consider other languages
+  const csvData = campaigns.map((camp) => {
+    const totalBooked = camp.lineItems.reduce(
+      (sum, item) => sum + item.bookedAmount,
+      0
+    );
+    const totalActual = camp.lineItems.reduce(
+      (sum, item) => sum + item.actualAmount + item.adjustments,
+      0
+    );
+
+    return {
+      ID: camp.id,
+      Name: camp.name,
+      Advertiser: camp.advertiser,
+      Utilization:
+        totalBooked === 0
+          ? "0.00%"
+          : ((totalActual / totalBooked) * 100).toFixed(2) + "%",
+      "Booked Budget": totalBooked,
+      "Actual Spend": totalActual,
+      "Line Item Count": camp.lineItems.length,
+    };
+  });
+
+  // Transfer to CSV string
+  const csvString = stringify(csvData, {
+    header: true,
+    columns: [
+      "ID",
+      "Name",
+      "Advertiser",
+      "Utilization",
+      "Booked Budget",
+      "Actual Spend",
+      "Line Item Count",
+    ],
+  });
+
+  return new Response(csvString, {
+    headers: {
+      "Content-Type": "text/csv; charset=utf-8",
+      "Content-Disposition": `attachment; filename="campaigns_export_${Date.now()}.csv"`,
+    },
+  });
 });
 
 const port = 3000;

@@ -11,7 +11,9 @@ import {
   Text,
   Title
 } from '@mantine/core'
-import { IconEye } from '@tabler/icons-react'
+import { notifications } from '@mantine/notifications'
+import { IconDownload, IconEye } from '@tabler/icons-react'
+import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 
 import { useCampaigns } from '../hooks/useCampaigns'
@@ -22,6 +24,34 @@ export default function CampaignList() {
   const page = Number(searchParams.get('p') || 1)
   const pageSize = Number(searchParams.get('size') || 10)
   const { data: campaigns, isLoading, isError } = useCampaigns(page, Number(pageSize))
+
+  const [isExporting, setIsExporting] = useState(false)
+
+  const handleExport = async () => {
+    try {
+      setIsExporting(true)
+      const res = await fetch('http://localhost:3000/api/export')
+      if (!res.ok) throw new Error('Export failed')
+
+      const blob = await res.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `campaigns_export_${new Date().toISOString().split('T')[0]}.csv`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+    } catch (error) {
+      notifications.show({
+        title: 'Error',
+        message: `Failed to export CSV: ${(error as Error).message}`,
+        color: 'red'
+      })
+    } finally {
+      setIsExporting(false)
+    }
+  }
 
   const updateParams = (newPage: number, newPageSize: number) => {
     setSearchParams({
@@ -100,7 +130,14 @@ export default function CampaignList() {
             Manage billing and invoices
           </Text>
         </div>
-        <Button>Export All</Button>
+        <Button
+          leftSection={<IconDownload size={16} />}
+          onClick={handleExport}
+          loading={isExporting}
+          variant="outline"
+        >
+          Export All
+        </Button>
       </Group>
 
       <Table.ScrollContainer maxHeight="60dvh" minWidth={500}>
