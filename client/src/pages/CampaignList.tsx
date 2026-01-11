@@ -37,7 +37,7 @@ export default function CampaignList() {
   }
 
   const getUtilization = (actual: number, booked: number) => {
-    const utilization = (actual / booked) * 100
+    const utilization = booked === 0 ? 0 : (actual / booked) * 100
     return (
       <Badge color={getBadgeColor(utilization)} variant="light">
         <NumberFormatter value={utilization} decimalScale={2} />%
