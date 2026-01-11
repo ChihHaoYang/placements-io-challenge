@@ -27,6 +27,20 @@ model LineItem {
   adjustments   Float
 
   campaign      Campaign @relation(fields: [campaignId], references: [id])
+  history       AdjustmentHistory[]
 
   @@index([campaignId])
+}
+
+model AdjustmentHistory {
+  id          Int      @id @default(autoincrement())
+  lineItemId  Int
+  oldValue    Float
+  newValue    Float
+  createdAt   DateTime @default(now())
+  reason      String?
+
+  lineItem    LineItem @relation(fields: [lineItemId], references: [id], onDelete: Cascade)
+
+  @@index([lineItemId])
 }

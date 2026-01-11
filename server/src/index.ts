@@ -96,22 +96,57 @@ app.get("/api/campaigns/:id", async (c) => {
 app.patch("/api/line-items/:id", async (c) => {
   const id = Number(c.req.param("id"));
   const body = await c.req.json();
+  const newAdjustments = Number(body.adjustments);
 
-  if (typeof body.adjustments !== "number") {
+  if (isNaN(newAdjustments)) {
     return c.json({ error: "Invalid adjustments value" }, 400);
   }
 
   try {
-    const updatedLineItem = await prisma.lineItem.update({
-      where: { id },
-      data: {
-        adjustments: body.adjustments,
-      },
+    const result = await prisma.$transaction(async (tx) => {
+      const currentItem = await tx.lineItem.findUnique({
+        where: { id },
+      });
+
+      if (!currentItem) throw new Error("Item not found");
+
+      if (currentItem.adjustments === newAdjustments) {
+        return currentItem;
+      }
+
+      await tx.adjustmentHistory.create({
+        data: {
+          lineItemId: id,
+          oldValue: currentItem.adjustments,
+          newValue: newAdjustments,
+          reason: "User Manual Update",
+        },
+      });
+
+      const updatedItem = await tx.lineItem.update({
+        where: { id },
+        data: { adjustments: newAdjustments },
+      });
+
+      return updatedItem;
     });
-    return c.json(updatedLineItem);
+
+    return c.json(result);
   } catch (e) {
+    console.error(e);
     return c.json({ error: "Update failed" }, 500);
   }
+});
+
+app.get("/api/line-items/:id/history", async (c) => {
+  const id = Number(c.req.param("id"));
+
+  const history = await prisma.adjustmentHistory.findMany({
+    where: { lineItemId: id },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return c.json(history);
 });
 
 app.get("/api/export", async (c) => {

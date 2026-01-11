@@ -20,7 +20,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 
 import { AnimatedNumber } from '../components/AnimatedNumber'
-import { useCampaignDetail } from '../hooks/useCampaignDetail'
+import { useCampaignDetail } from '../hooks'
 import type { LineItem } from '../types'
 
 export default function CampaignDetail() {

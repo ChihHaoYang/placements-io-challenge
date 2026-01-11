@@ -16,7 +16,7 @@ import { IconDownload, IconEye } from '@tabler/icons-react'
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 
-import { useCampaigns } from '../hooks/useCampaigns'
+import { useCampaigns } from '../hooks'
 
 export default function CampaignList() {
   const navigate = useNavigate()
