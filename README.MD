@@ -100,8 +100,11 @@ npx prisma migrate dev --name init
 npx prisma generate
 
 # Seed the database with sample data (This will take a while)
-npx tsx prisma/seed.ts
+npx prisma db seed
 # You should see: "Seeding finished."
+
+# Optional: Check DB Data
+# npx prisma studio
 
 # Return to root
 cd ..
