@@ -32,25 +32,22 @@ async function main() {
   }
 
   console.log(`Creating ${campaignsMap.size} campaigns...`);
-  for (const camp of campaignsMap.values()) {
-    await prisma.campaign.create({
-      data: camp,
-    });
-  }
+  await prisma.campaign.createMany({
+    data: Array.from(campaignsMap.values()),
+  });
 
   console.log(`Creating ${RAW_DATA.length} line items...`);
-  for (const row of RAW_DATA) {
-    await prisma.lineItem.create({
-      data: {
-        id: row.id,
-        campaignId: row.campaign_id,
-        name: row.line_item_name,
-        bookedAmount: row.booked_amount,
-        actualAmount: row.actual_amount,
-        adjustments: row.adjustments,
-      },
-    });
-  }
+
+  await prisma.lineItem.createMany({
+    data: RAW_DATA.map((row) => ({
+      id: row.id,
+      campaignId: row.campaign_id,
+      name: row.line_item_name,
+      bookedAmount: row.booked_amount,
+      actualAmount: row.actual_amount,
+      adjustments: row.adjustments,
+    })),
+  });
 
   console.log("Seeding finished.");
 }
